@@ -68,13 +68,14 @@ def check(selected_subsets: List[set], sets: Tuple[set, set]):
     return X == merged_set
 
 if __name__ == "__main__":
-    sets100 = generate_data(100)
+    element_num = 5000
+    sets = generate_data(element_num)
     data_path = './data/Exp2/'
-    # with open(data_path + f'sets{100}.pkl', 'wb') as f:
-    #     pickle.dump(sets100, f)
+    with open(data_path + f'sets{element_num}.pkl', 'wb') as f:
+        pickle.dump(sets, f)
         
     # ss = Greedy(sets100)
-    ss = LP(sets100)
+    ss = LP(sets)
     
     # print(ss)
-    print(check(ss, sets100))
+    print(check(ss, sets))
