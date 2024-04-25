@@ -64,7 +64,7 @@ class Graph:
         elif self.map[next[0], next[1]] == 2: # streams
             geo_cost = 2
         elif self.map[next[0], next[1]] == 3: # obstacle
-            geo_cost = int('inf')
+            geo_cost = float('inf')
         else:
             geo_cost = 0
         
@@ -105,6 +105,13 @@ class Graph:
         ax.set_yticks(ytick_list)
         ax.set_yticklabels(label_list)
         
+        # plt.show()
+        return ax
+        
+    def draw_path(self, path: List[NodeLocation]):
+        ax = self.draw()
+        for node in path:
+            ax.add_patch(patches.Rectangle((node[0], node[1]), 1, 1, color='green')) 
         plt.show()
         
 # First Graph
@@ -172,15 +179,16 @@ def A_Star(
     graph: Graph, 
     start: NodeLocation, 
     target: NodeLocation, 
-    both_direction: bool = False
 ) -> List[NodeLocation]:
+    start = [start[0]-1, start[1]-1]
+    target = [target[0]-1, target[1]-1]
+    
     pri_que = queue.PriorityQueue()
     pri_que.put(start, 0)
     
     cost_now = dict()
     path_from = dict()
-    cost_now[start] = 0
-    cost_now
+    cost_now[str(start)] = 0
     while not pri_que.empty():
         current = pri_que.get()
         if current == target:
@@ -188,14 +196,33 @@ def A_Star(
         
         neighbers = graph.neighbors(current)
         for v in neighbers:
-            cost = cost_now[current] + graph.cost(current, v)
-            if v not in cost_now.keys() or cost < cost_now[v]:
-                cost_now[v] = cost
+            cost = cost_now[str(current)] + graph.cost(current, v)
+            if str(v) not in cost_now.keys() or cost < cost_now[str(v)]:
+                cost_now[str(v)] = cost
                 pri_que.put(v, cost + cal_estimate_distance(v, target))
-                path_from[v] = current
+                path_from[str(v)] = current
     
     path = [target]
     while path[-1] != start:
-        path.append(path_from[path[-1]])
+        path.append(path_from[str(path[-1])])
         
     return path
+
+def Bi_AStar(
+    graph: Graph, 
+    start: NodeLocation, 
+    target: NodeLocation, 
+) -> Tuple[List[NodeLocation], List[NodeLocation]]:
+    pass
+
+if __name__ == "__main__":
+    # start = [4,9]
+    # target = [15, 10]
+    # path = A_Star(graph1, start, target)
+    
+    start = [5, 11]
+    target = [36, 1]
+    path = A_Star(graph2, start, target)
+    
+    print(path)
+    graph2.draw_path(path)
