@@ -108,11 +108,14 @@ class Graph:
         # plt.show()
         return ax
         
-    def draw_path(self, path: List[NodeLocation]):
-        ax = self.draw()
+    def draw_path(self, path: List[NodeLocation], color='green', show=True, ax=None):
+        if not ax:
+            ax = self.draw()
         for node in path:
-            ax.add_patch(patches.Rectangle((node[0], node[1]), 1, 1, color='green')) 
-        plt.show()
+            ax.add_patch(patches.Rectangle((node[0], node[1]), 1, 1, color=color)) 
+        if show:
+            plt.show()
+        return ax
         
 # First Graph
 graph1 = Graph(17, 14)
@@ -179,7 +182,7 @@ def A_Star(
     graph: Graph, 
     start: NodeLocation, 
     target: NodeLocation, 
-) -> List[NodeLocation]:
+) -> Tuple[List[NodeLocation], int]:
     start = [start[0]-1, start[1]-1]
     target = [target[0]-1, target[1]-1]
     
@@ -203,17 +206,70 @@ def A_Star(
                 path_from[str(v)] = current
     
     path = [target]
+    total_cost = 0
     while path[-1] != start:
-        path.append(path_from[str(path[-1])])
+        last_node = path_from[str(path[-1])]
+        path.append(last_node)
+        total_cost += graph.cost(path[-1], path[-2])
         
-    return path
+    return path, total_cost
 
 def Bi_AStar(
     graph: Graph, 
     start: NodeLocation, 
     target: NodeLocation, 
 ) -> Tuple[List[NodeLocation], List[NodeLocation]]:
-    pass
+    start = [start[0]-1, start[1]-1]
+    target = [target[0]-1, target[1]-1]
+    
+    pri_que_s = queue.PriorityQueue()
+    pri_que_s.put(start, 0)
+    pri_que_t = queue.PriorityQueue()
+    pri_que_t.put(target, 0)
+    
+    cost_now_s = dict()
+    path_from_s = dict()
+    cost_now_t = dict()
+    path_from_t = dict()
+    cost_now_s[str(start)] = 0
+    cost_now_t[str(target)] = 0
+    while (not pri_que_s.empty()) and (not pri_que_t.empty()):
+        current_s = pri_que_s.get()
+        current_t = pri_que_t.get()
+        if str(current_s) in cost_now_t.keys():
+            path_t = [current_s]
+            path_s = [current_s]
+            while path_t[-1] != target:
+                path_t.append(path_from_t[str(path_t[-1])])
+            while path_s[-1] != start:
+                path_s.append(path_from_s[str(path_s[-1])])
+            break
+        if str(current_t) in cost_now_s.keys():
+            path_t = [current_t]
+            path_s = [current_t]
+            while path_t[-1] != target:
+                path_t.append(path_from_t[str(path_t[-1])])
+            while path_s[-1] != start:
+                path_s.append(path_from_s[str(path_s[-1])])
+            break
+        
+        neighbers_s = graph.neighbors(current_s)
+        for v in neighbers_s:
+            cost = cost_now_s[str(current_s)] + graph.cost(current_s, v)
+            if str(v) not in cost_now_s.keys() or cost < cost_now_s[str(v)]:
+                cost_now_s[str(v)] = cost
+                pri_que_s.put(v, cost + cal_estimate_distance(v, target))
+                path_from_s[str(v)] = current_s
+                
+        neighbers_t = graph.neighbors(current_t)
+        for v in neighbers_t:
+            cost = cost_now_t[str(current_t)] + graph.cost(current_t, v)
+            if str(v) not in cost_now_t.keys() or cost < cost_now_t[str(v)]:
+                cost_now_t[str(v)] = cost
+                pri_que_t.put(v, cost + cal_estimate_distance(v, start))
+                path_from_t[str(v)] = current_t
+        
+    return path_s, path_t
 
 if __name__ == "__main__":
     # start = [4,9]
@@ -222,7 +278,13 @@ if __name__ == "__main__":
     
     start = [5, 11]
     target = [36, 1]
-    path = A_Star(graph2, start, target)
+    # path1, cost1 = A_Star(graph2, start, target)
+    path2, cost2 = A_Star(graph2, target, start)
+    # graph2.draw_path(path1, 'green', True)
+    graph2.draw_path(path2, 'red', True)
+    # print(cost1, cost2)
+    # path1, path2 = Bi_AStar(graph2, start, target)
     
-    print(path)
-    graph2.draw_path(path)
+    # print(path)
+    # ax = graph2.draw_path(path1, 'green', False)
+    # graph2.draw_path(path2, 'red', True, ax)
