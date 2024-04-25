@@ -86,13 +86,22 @@ class Graph:
                 ax.add_patch(patches.Rectangle((row, col), 1, 1, color=color)) 
         
         ax.set_xlim(0, self.width)
-        ax.set_ylim(0, self.height)
-        interval = 10 
-        # ax.set_xticklabels([str(i + 1) for i in range(0, self.width, interval)]) 
-        # ax.set_yticklabels([str(i + 1) for i in range(0, self.height, interval)])
-        ax.set_xticks(np.arange(self.width + 1))
-        ax.set_yticks(np.arange(self.height + 1))
-        ax.grid(True)
-
-        plt.show()
+        ax.set_ylim(self.height, 0)
+        ax.xaxis.set_ticks_position('top')
         
+        for x in range(1, self.width):
+            plt.axvline(x=x, linewidth=0.5, color='gray')
+        for y in range(1, self.height):
+            plt.axhline(y=y, linewidth=0.5, color='gray')
+
+        interval = 5
+        label_list = list(i+1 for i in range(interval-1, self.width, interval))
+        xtick_list = [i-0.5 for i in label_list]
+        ax.set_xticks(xtick_list)
+        ax.set_xticklabels(label_list)
+        label_list = list(i+1 for i in range(interval-1, self.height, interval))
+        ytick_list = [i-0.5 for i in label_list]
+        ax.set_yticks(ytick_list)
+        ax.set_yticklabels(label_list)
+        
+        plt.show()
