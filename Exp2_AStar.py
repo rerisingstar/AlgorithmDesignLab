@@ -174,8 +174,10 @@ graph2.add_geography(streams=streams)
 
 
 def cal_estimate_distance(node: NodeLocation, target: NodeLocation):
-    manhattan_distance = abs(target[0]-node[0]) + abs(target[1]-node[1])
-    return manhattan_distance
+    # manhattan_distance = abs(target[0]-node[0]) + abs(target[1]-node[1])
+    # return manhattan_distance
+    square_distance = math.sqrt((target[0]-node[0])**2 + (target[1]-node[1])**2)
+    return square_distance
 
 
 def A_Star(
@@ -187,13 +189,13 @@ def A_Star(
     target = [target[0]-1, target[1]-1]
     
     pri_que = queue.PriorityQueue()
-    pri_que.put(start, 0)
+    pri_que.put((0, start))
     
     cost_now = dict()
     path_from = dict()
     cost_now[str(start)] = 0
     while not pri_que.empty():
-        current = pri_que.get()
+        current = pri_que.get()[1]
         if current == target:
             break
         
@@ -202,7 +204,7 @@ def A_Star(
             cost = cost_now[str(current)] + graph.cost(current, v)
             if str(v) not in cost_now.keys() or cost < cost_now[str(v)]:
                 cost_now[str(v)] = cost
-                pri_que.put(v, cost + cal_estimate_distance(v, target))
+                pri_que.put((cost + cal_estimate_distance(v, target), v))
                 path_from[str(v)] = current
     
     path = [target]
@@ -223,9 +225,9 @@ def Bi_AStar(
     target = [target[0]-1, target[1]-1]
     
     pri_que_s = queue.PriorityQueue()
-    pri_que_s.put(start, 0)
+    pri_que_s.put((0, start))
     pri_que_t = queue.PriorityQueue()
-    pri_que_t.put(target, 0)
+    pri_que_t.put((0, target))
     
     cost_now_s = dict()
     path_from_s = dict()
@@ -234,8 +236,8 @@ def Bi_AStar(
     cost_now_s[str(start)] = 0
     cost_now_t[str(target)] = 0
     while (not pri_que_s.empty()) and (not pri_que_t.empty()):
-        current_s = pri_que_s.get()
-        current_t = pri_que_t.get()
+        current_s = pri_que_s.get()[1]
+        current_t = pri_que_t.get()[1]
         if str(current_s) in cost_now_t.keys():
             path_t = [current_s]
             path_s = [current_s]
@@ -244,29 +246,29 @@ def Bi_AStar(
             while path_s[-1] != start:
                 path_s.append(path_from_s[str(path_s[-1])])
             break
-        if str(current_t) in cost_now_s.keys():
-            path_t = [current_t]
-            path_s = [current_t]
-            while path_t[-1] != target:
-                path_t.append(path_from_t[str(path_t[-1])])
-            while path_s[-1] != start:
-                path_s.append(path_from_s[str(path_s[-1])])
-            break
+        # if str(current_t) in cost_now_s.keys():
+        #     path_t = [current_t]
+        #     path_s = [current_t]
+        #     while path_t[-1] != target:
+        #         path_t.append(path_from_t[str(path_t[-1])])
+        #     while path_s[-1] != start:
+        #         path_s.append(path_from_s[str(path_s[-1])])
+        #     break
         
-        neighbers_s = graph.neighbors(current_s)
-        for v in neighbers_s:
+        neighbers = graph.neighbors(current_s)
+        for v in neighbers:
             cost = cost_now_s[str(current_s)] + graph.cost(current_s, v)
             if str(v) not in cost_now_s.keys() or cost < cost_now_s[str(v)]:
                 cost_now_s[str(v)] = cost
-                pri_que_s.put(v, cost + cal_estimate_distance(v, target))
+                pri_que_s.put((cost + cal_estimate_distance(v, target), v))
                 path_from_s[str(v)] = current_s
                 
-        neighbers_t = graph.neighbors(current_t)
-        for v in neighbers_t:
+        neighbers = graph.neighbors(current_t)
+        for v in neighbers:
             cost = cost_now_t[str(current_t)] + graph.cost(current_t, v)
             if str(v) not in cost_now_t.keys() or cost < cost_now_t[str(v)]:
                 cost_now_t[str(v)] = cost
-                pri_que_t.put(v, cost + cal_estimate_distance(v, start))
+                pri_que_t.put((cost + cal_estimate_distance(v, start), v))
                 path_from_t[str(v)] = current_t
         
     return path_s, path_t
@@ -277,14 +279,17 @@ if __name__ == "__main__":
     # path = A_Star(graph1, start, target)
     
     start = [5, 11]
+    # start = [13, 9]
     target = [36, 1]
+    # target = [13, 9]
     # path1, cost1 = A_Star(graph2, start, target)
-    path2, cost2 = A_Star(graph2, target, start)
+    # path2, cost2 = A_Star(graph2, target, start)
     # graph2.draw_path(path1, 'green', True)
-    graph2.draw_path(path2, 'red', True)
+    # graph2.draw_path(path2, 'red', True)
+    # print(cost2)
     # print(cost1, cost2)
-    # path1, path2 = Bi_AStar(graph2, start, target)
+    path1, path2 = Bi_AStar(graph2, start, target)
     
     # print(path)
-    # ax = graph2.draw_path(path1, 'green', False)
-    # graph2.draw_path(path2, 'red', True, ax)
+    ax = graph2.draw_path(path1, 'green', False)
+    graph2.draw_path(path2, 'red', True, ax)
