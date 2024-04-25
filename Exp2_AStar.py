@@ -105,3 +105,59 @@ class Graph:
         ax.set_yticklabels(label_list)
         
         plt.show()
+        
+# First Graph
+graph1 = Graph(17, 14)
+obstacles = [
+    [7, 6],
+    [7, 7],
+    [8, 8],
+    [8, 9],
+    [8, 10],
+    [9, 10],
+    [9, 11], 
+    [9, 12]
+]
+graph1.add_geography(obstacles=obstacles)
+
+# Second Graph
+graph2 = Graph(40, 20)
+obstacles = [[13, i] for i in list(range(1, 9)) + list(range(13, 21))]
+obstacles += [[i, 3] for i in list(range(1, 7))+list(range(8,12))]
+obstacles += [[4, 1], [8, 1], [8, 2], [9, 4], [8, 6], [9, 6]]
+obstacles += [[i, 7] for i in range(3, 9)] + [[3, 8], [6, 8], [8, 8]]
+obstacles += [[6, i] for i in range(9, 13)]
+obstacles += [[8, 10], [8, 11]]
+obstacles += [[9, i] for i in range(11, 17)] + [[10, 14], [12, 14]]
+obstacles += [[3, 11], [3, 12], [4, 12], [5, 12]]
+obstacles += [[i, 16] for i in range(4, 9)] + [[8, 18], [8, 19], [8, 20]]
+obstacles += [[4, 13], [4, 14], [4, 15], [4, 17], [4, 19], [4, 20]]
+obstacles += [[25, 16], [25, 17], [26, 16], [26, 17]]
+obstacles += [[29, 11], [32, 12], [32, 14], [37, 8], [37, 10]]
+for i in range(20, 23):
+    for j in range(11, 14):
+        obstacles.append([i, j])
+graph2.add_geography(obstacles=obstacles)
+deserts = [[i, 1] for i in range(25, 41)]
+deserts += [[i, 2] for i in range(26, 41)]
+deserts += [[i, 3] for i in range(27, 41)]
+deserts += [[i, 4] for i in range(27, 38)]
+deserts += [[i, 5] for i in range(27, 37)]
+deserts += [[i, 6] for i in range(28, 34)]
+deserts += [[i, 7] for i in range(28, 34)]
+deserts += [[i, 8] for i in range(30, 34)]
+graph2.add_geography(deserts=deserts)
+streams = [[35, 2], [34, 3], [33, 4], [34, 5]]
+streams += [[34, i] for i in range(6, 11)]
+streams += [[35, i] for i in range(6, 11)] + [[36, 9], [36, 8]]
+streams += [[33, i] for i in range(9, 13)] + [[34, 11]]
+streams += [[36, 11], [37, 11], [35, 12], [36, 12], [34, 13], [35, 13]]
+streams += [[i, 14] for i in range(33, 36)]
+streams += [[i, 15] for i in range(33, 36)]
+streams += [[i, 16] for i in range(32, 35)]
+streams += [[i, 17] for i in range(32, 35)]
+streams += [[i, 18] for i in range(31, 34)]
+streams += [[i, 19] for i in range(30, 33)]
+streams += [[i, 20] for i in range(29, 32)]
+graph2.add_geography(streams=streams)
+
