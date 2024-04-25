@@ -1,5 +1,6 @@
 import math
 from typing import List, Tuple
+import queue
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
@@ -161,3 +162,40 @@ streams += [[i, 19] for i in range(30, 33)]
 streams += [[i, 20] for i in range(29, 32)]
 graph2.add_geography(streams=streams)
 
+
+def cal_estimate_distance(node: NodeLocation, target: NodeLocation):
+    manhattan_distance = abs(target[0]-node[0]) + abs(target[1]-node[1])
+    return manhattan_distance
+
+
+def A_Star(
+    graph: Graph, 
+    start: NodeLocation, 
+    target: NodeLocation, 
+    both_direction: bool = False
+) -> List[NodeLocation]:
+    pri_que = queue.PriorityQueue()
+    pri_que.put(start, 0)
+    
+    cost_now = dict()
+    path_from = dict()
+    cost_now[start] = 0
+    cost_now
+    while not pri_que.empty():
+        current = pri_que.get()
+        if current == target:
+            break
+        
+        neighbers = graph.neighbors(current)
+        for v in neighbers:
+            cost = cost_now[current] + graph.cost(current, v)
+            if v not in cost_now.keys() or cost < cost_now[v]:
+                cost_now[v] = cost
+                pri_que.put(v, cost + cal_estimate_distance(v, target))
+                path_from[v] = current
+    
+    path = [target]
+    while path[-1] != start:
+        path.append(path_from[path[-1]])
+        
+    return path
