@@ -358,9 +358,10 @@ def DevideAndConquer(points: List[Point]) -> List[Point]:
     return cov_hull[1:]
 
 if __name__ == "__main__":
-    point_num = 100
-    alg = "BF"
+    point_num = 50
+    alg = "DAC"
     points = get_points(f"./data/Exp1/{point_num}points.pkl")
+    # points = generate_points(point_num, save=True)
     
     formatted_time = datetime.now().strftime('%Y-%m-%d_%H%M%S')
     start_time = time.perf_counter()
