@@ -276,20 +276,18 @@ def Bi_AStar(
 if __name__ == "__main__":
     # start = [4,9]
     # target = [15, 10]
-    # path = A_Star(graph1, start, target)
-    
+    # graph = graph1
     start = [5, 11]
-    # start = [13, 9]
     target = [36, 1]
-    # target = [13, 9]
-    # path1, cost1 = A_Star(graph2, start, target)
-    # path2, cost2 = A_Star(graph2, target, start)
-    # graph2.draw_path(path1, 'green', True)
-    # graph2.draw_path(path2, 'red', True)
-    # print(cost2)
-    # print(cost1, cost2)
-    path1, path2 = Bi_AStar(graph2, start, target)
+    graph = graph2
     
-    # print(path)
-    ax = graph2.draw_path(path1, 'green', False)
-    graph2.draw_path(path2, 'red', True, ax)
+    
+    path1, cost1 = A_Star(graph, start, target)
+    path2, cost2 = A_Star(graph, target, start)
+    graph.draw_path(path1, 'green', True)
+    graph.draw_path(path2, 'red', True)
+    
+    
+    path1, path2 = Bi_AStar(graph, start, target)
+    ax = graph.draw_path(path1, 'green', False)
+    graph.draw_path(path2, 'red', True, ax)

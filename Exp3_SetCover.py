@@ -3,6 +3,7 @@ import random
 import copy
 from typing import Tuple, List
 import pickle
+import time
 
 def generate_data(X_size: int) -> Tuple[set, set]:
     """
@@ -43,6 +44,19 @@ def Greedy(sets: Tuple[set, set]):
     
     return selected_subsets
 
+def cal_f(X, F):
+    max_num = 0
+    max_e = None
+    for e in X:
+        show_times = 0
+        for C in F:
+            if e in C:
+                show_times += 1
+        if show_times > max_num:
+            max_num = show_times
+            max_e = e
+    return max_num
+
 def LP(sets: Tuple[set, set], theta=0.5):
     X, F = sets
     prob = pulp.LpProblem("SetCover", pulp.LpMinimize)
@@ -74,8 +88,18 @@ if __name__ == "__main__":
     with open(data_path + f'sets{element_num}.pkl', 'wb') as f:
         pickle.dump(sets, f)
         
-    # ss = Greedy(sets100)
-    ss = LP(sets)
+    X, F = sets
+    frequencies = {e: sum(e in f for f in F) for e in X}
+    max_frequency = max(frequencies.values())
+        
+    start_time = time.perf_counter()    
+    
+    ss = Greedy(sets)
+    # ss = LP(sets, theta=1/max_frequency)
+    
+    end_time = time.perf_counter()
+    elapsed_time = end_time - start_time
+    print(f"Algorithm execution time: {elapsed_time * 1000:.3f} ms")
     
     # print(ss)
     print(check(ss, sets))
